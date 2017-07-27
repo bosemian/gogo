@@ -5,18 +5,32 @@
     <title>GO GO</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.4/css/bulma.css">
     <link href="/-/css/style.css" rel="stylesheet">
-    {{template "root-style"}}
+    {{template "root-style" .}}
   </head>
   <body>
-    <div>
-      Navbar
+    <nav class="navbar">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="http://bulma.io">
+          <img src="http://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28">
+        </a>
+
+        <div class="navbar-burger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+    <br>
+    <div class="container">
+      {{template "root-body" .}}
     </div>
-    {{template "root-body"}}
     <div>
       Footer
     </div>
-    {{template "root-script"}}
+    {{template "root-script" .}}
   </body>
 </html>
 {{end}}

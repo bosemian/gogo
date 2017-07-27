@@ -13,9 +13,11 @@ import (
 )
 
 var (
-	tpIndex      = parseTemplate("root.tmpl", "index.tmpl")
-	tpAdminLogin = parseTemplate("root.tmpl", "admin/login.tmpl")
-	tpAdminList  = parseTemplate("root.tmpl", "admin/list.tmpl")
+	tpIndex       = parseTemplate("root.tmpl", "index.tmpl")
+	tpAdminLogin  = parseTemplate("root.tmpl", "admin/login.tmpl")
+	tpAdminList   = parseTemplate("root.tmpl", "admin/list.tmpl")
+	tpAdminCreate = parseTemplate("root.tmpl", "admin/create.tmpl")
+	tpAdminEdit   = parseTemplate("root.tmpl", "admin/edit.tmpl")
 )
 
 var m = minify.New()
@@ -45,21 +47,6 @@ func parseTemplate(files ...string) *template.Template {
 	}
 	t = t.Lookup("root")
 	return t
-}
-
-// Index render index view
-func Index(w http.ResponseWriter, data interface{}) {
-	render(tpIndex, w, data)
-}
-
-// AdminLogin render admin view
-func AdminLogin(w http.ResponseWriter, data interface{}) {
-	render(tpAdminLogin, w, data)
-}
-
-// AdminList render adminlist view
-func AdminList(w http.ResponseWriter, data interface{}) {
-	render(tpAdminList, w, data)
 }
 
 func render(t *template.Template, w http.ResponseWriter, data interface{}) {

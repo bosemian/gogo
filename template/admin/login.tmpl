@@ -1,6 +1,24 @@
 {{define "root-body"}}
 <div>
-  Login Page
+  <form method="POST">
+    <div class="field">
+      <label class="label">Username</label>
+      <div class="control">
+        <input class="input" type="text" placeholder="username">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Password</label>
+      <div class="control">
+        <input class="input" type="password" placeholder="password">
+      </div>
+    </div>
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-primary">Submit</button>
+      </div>
+    </div>
+  </form>
 </div>
 {{end}}
 
