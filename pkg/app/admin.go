@@ -2,6 +2,7 @@ package app
 
 import (
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -19,6 +20,14 @@ func adminLogin(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		log.Println(userID)
+		http.SetCookie(w, &http.Cookie{
+			Name:     "user",
+			Value:    userID,
+			MaxAge:   int(10 * time.Minute / time.Second),
+			HttpOnly: true,
+			Path:     "/",
+		})
 		http.Redirect(w, r, "/admin/list", http.StatusSeeOther)
 		return
 	}
@@ -119,8 +128,19 @@ func adminRegister(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 	view.AdminRegiter(w, nil)
+}
+
+func adminLogout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "user",
+		Value:    "",
+		MaxAge:   -1,
+		Path:     "/",
+		HttpOnly: true,
+	})
+	http.Redirect(w, r, "/", http.StatusFound)
 }

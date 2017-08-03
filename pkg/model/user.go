@@ -60,3 +60,25 @@ func Login(username, password string) (string, error) {
 	return userID.Hex(), nil
 
 }
+
+// CheckUserID check id for set cookies
+func CheckUserID(id string) (bool, error) {
+	s := mongoSession.Copy()
+	defer s.Close()
+	if !bson.IsObjectIdHex(id) {
+		return false, fmt.Errorf("invalid id")
+	}
+	objectID := bson.ObjectIdHex(id)
+	n, err := s.
+		DB(database).
+		C("users").
+		FindId(objectID).
+		Count()
+	if err != nil {
+		return false, err
+	}
+	if n <= 0 {
+		return false, nil
+	}
+	return true, nil
+}
