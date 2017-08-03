@@ -26,7 +26,7 @@ func Register(username, password string) error {
 	defer s.Close()
 	s.DB(database).C("users").Insert(bson.M{
 		"username": username,
-		"password": hpwd,
+		"password": string(hpwd),
 	})
 	if err != nil {
 		return err
@@ -45,13 +45,12 @@ func Login(username, password string) (string, error) {
 		Find(bson.M{"username": username}).
 		One(&user)
 	if err == mgo.ErrNotFound {
-		return "", fmt.Errorf("username or password invalid")
+		return "", fmt.Errorf("username or password wrong")
 	}
 	if err != nil {
 		return "", err
 	}
-
-	hpwd, _ := user["password"].(string)
+	hpwd := user["password"].(string)
 	err = bcrypt.CompareHashAndPassword([]byte(hpwd), []byte(password))
 	if err != nil {
 		return "", fmt.Errorf("username or password invalid")
