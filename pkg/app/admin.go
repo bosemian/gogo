@@ -2,7 +2,6 @@ package app
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -12,26 +11,25 @@ import (
 )
 
 func adminLogin(w http.ResponseWriter, r *http.Request) {
+	sess := model.GetSession(r)
 	if r.Method == http.MethodPost {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 		userID, err := model.Login(username, password)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			sess.Flash.Add("errors", err.Error())
+			sess.Save(w)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
-		log.Println(userID)
-		http.SetCookie(w, &http.Cookie{
-			Name:     "user",
-			Value:    userID,
-			MaxAge:   int(10 * time.Minute / time.Second),
-			HttpOnly: true,
-			Path:     "/",
-		})
+		sess.UserID = userID
+		sess.Save(w)
 		http.Redirect(w, r, "/admin/list", http.StatusSeeOther)
 		return
 	}
-	view.AdminLogin(w, nil)
+	view.AdminLogin(w, &view.AdminLoginData{
+		Flash: sess.Flash,
+	})
 }
 
 func adminDelete(w http.ResponseWriter, r *http.Request) {
@@ -135,12 +133,8 @@ func adminRegister(w http.ResponseWriter, r *http.Request) {
 }
 
 func adminLogout(w http.ResponseWriter, r *http.Request) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     "user",
-		Value:    "",
-		MaxAge:   -1,
-		Path:     "/",
-		HttpOnly: true,
-	})
+	sess := model.GetSession(r)
+	sess.UserID = ""
+	sess.Save(w)
 	http.Redirect(w, r, "/", http.StatusFound)
 }

@@ -2,6 +2,7 @@ package view
 
 import "net/http"
 import "github.com/bosemian/gogo/pkg/model"
+import "net/url"
 
 type IndexData struct {
 	List []*model.News
@@ -9,6 +10,10 @@ type IndexData struct {
 
 type AdminListData struct {
 	List []*model.News
+}
+
+type AdminLoginData struct {
+	Flash url.Values
 }
 
 // Index render index view
@@ -22,8 +27,9 @@ func News(w http.ResponseWriter, data *model.News) {
 }
 
 // AdminLogin render admin view
-func AdminLogin(w http.ResponseWriter, data interface{}) {
+func AdminLogin(w http.ResponseWriter, data *AdminLoginData) {
 	render(tpAdminLogin, w, data)
+	data.Flash.Del("errors")
 }
 
 // AdminRegiter render register view

@@ -25,13 +25,12 @@ func Mount(mux *http.ServeMux) {
 
 func onlyAdmin(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ck, err := r.Cookie("user")
+		sess := model.GetSession(r)
+		ok, err := model.CheckUserID(sess.UserID)
 		if err != nil {
-			http.Redirect(w, r, "/", http.StatusFound)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		userID := ck.Value
-		ok, err := model.CheckUserID(userID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
