@@ -1,57 +1,100 @@
 package model
 
 import (
-	"crypto/rand"
-	"encoding/base64"
+	"fmt"
+	"sync"
 	"time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 // News type
 type News struct {
-	ID        string
+	ID        bson.ObjectId `bson:"_id"`
 	Title     string
 	Image     string
 	Detail    string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `bson:"createdAt"`
+	UpdatedAt time.Time `bson:"updatedAt"`
 }
 
-var newStorage []*News
+var (
+	newStorage []News
+	muTextNews sync.RWMutex
+)
 
-func generateID() string {
-	buf := make([]byte, 16)
-	rand.Read(buf)
-	return base64.StdEncoding.EncodeToString(buf)
-}
-
-// CreateNews from request
-func CreateNews(n *News) {
-	n.ID = generateID()
+// CreateNews from request to db
+func CreateNews(n News) error {
+	n.ID = bson.NewObjectId()
 	n.CreatedAt = time.Now()
 	n.UpdatedAt = n.CreatedAt
-	newStorage = append(newStorage, n)
-}
 
-// ListNews get all news
-func ListNews() []*News {
-	return newStorage
-}
-
-// GetNews from request id
-func GetNews(id string) *News {
-	for _, new := range newStorage {
-		if new.ID == id {
-			return new
-		}
+	s := mongoSession.Copy()
+	defer s.Close()
+	err := s.DB(database).C("news").Insert(&n)
+	if err != nil {
+		return err
 	}
+
 	return nil
 }
 
-// DeleteNews from request id
-func DeleteNews(id string) {
-	for i, new := range newStorage {
-		if new.ID == id {
-			newStorage = append(newStorage[:i], newStorage[i+1:]...)
-		}
+// ListNews get all news from db
+func ListNews() ([]*News, error) {
+	s := mongoSession.Copy()
+	defer s.Close()
+	var news []*News
+	err := s.DB(database).C("news").Find(nil).All(&news)
+	if err != nil {
+		return nil, err
 	}
+	return news, nil
+}
+
+// GetNews from request id to db
+func GetNews(id string) (*News, error) {
+	if !bson.IsObjectIdHex(id) {
+		return nil, fmt.Errorf("invalid id")
+	}
+	objectID := bson.ObjectIdHex(id)
+	s := mongoSession.Copy()
+	defer s.Close()
+	var n News
+	err := s.DB(database).C("news").FindId(objectID).One(&n)
+	if err != nil {
+		return nil, err
+	}
+	return &n, nil
+}
+
+// DeleteNews from request id
+func DeleteNews(id string) error {
+	if !bson.IsObjectIdHex(id) {
+		return fmt.Errorf("invalid id")
+	}
+	objectID := bson.ObjectIdHex(id)
+	s := mongoSession.Copy()
+	defer s.Close()
+	err := s.DB(database).C("news").RemoveId(objectID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateNews update news
+func UpdateNews(n *News) error {
+	if n.ID == "" {
+		return fmt.Errorf("required id to update")
+	}
+	n.UpdatedAt = time.Now()
+	s := mongoSession.Copy()
+	defer s.Close()
+	err := s.DB(database).C("news").UpdateId(n.ID, n)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

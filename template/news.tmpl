@@ -1,0 +1,25 @@
+{{define "root-body"}}
+<div class="tile">
+  <div class="tile is-ancestor">
+    <div class="tile is-parent">
+      <article class="tile is-child box">
+        <div class="content">
+          <h1>{{.Title}}</h1>
+           {{if .Image}}
+           <figure>
+              <img src="{{.Image}}">
+            </figure>
+           {{end}}
+          <p>{{.Detail}}</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+{{end}}
+
+{{define "root-script"}}
+{{end}}
+
+{{define "root-style"}}
+{{end}}

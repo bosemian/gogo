@@ -1,13 +1,37 @@
 {{define "root-body"}}
 <div>
-  Index Page
+  <h1>Create News</h1>
+  <form method="POST" enctype="multipart/form-data">
+    <div class="field">
+      <label class="label">Title</label>
+      <div class="control">
+        <input name="title" class="input" type="text" value="{{.Title}}">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Image</label>
+      <div class="control">
+        <input name="image" class="input" type="file">
+      </div>
+    </div>
+    <div class="field">
+      <label class="label">Detail</label>
+      <div class="control">
+        <textarea name="detail" class="textarea" type="text">{{.Detail}}</textarea>
+      </div>
+    </div>
+    <div class="field is-grouped">
+      <div class="control">
+        <button class="button is-success" type="submit">Save</button>
+      </div>
+      <div class="control">
+        <a class="button is-danger" href="/admin/list">Cancel</a>
+      </div>
+    </div>
+  </form>
 </div>
 {{end}}
-
 {{define "root-script"}}
-<script>
-  console.log("script")
-</script>
 {{end}}
 
 {{define "root-style"}}

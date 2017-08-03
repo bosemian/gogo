@@ -1,25 +1,39 @@
 {{define "root-body"}}
 <div>
-  <a class="button is-link" href="/admin/create">Create New</a>
-  <br>
-  <div class="box">
-    <article class="media">
-      <div class="media-left">
-        <figure class="image is-64x64">
-          <img src="http://bulma.io/images/placeholders/128x128.png" alt="Image">
-        </figure>
-      </div>
-      <div class="media-content">
-        <div class="content">
-          <p>
-            <strong>John Smith</strong> <small>@johnsmith</small> <small>31m</small>
-            <br>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur sit amet massa fringilla egestas. Nullam condimentum luctus turpis.
-          </p>
-        </div>
-      </div>
-    </article>
-  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tfoot>
+    </tfoot>
+    <tbody>
+      {{range $i, $value := .List}}
+      <tr>
+        <th>{{$i}}</th>
+        <td>{{$value.ID.Hex}}</td>
+        <td>{{$value.Title}}</td>
+        <td>
+          <div class="field is-grouped">
+            <div class="control">
+              <a class="button is-warning" href="/admin/edit?id={{$value.ID.Hex}}">Edit</a>
+            </div>
+            <div class="control">
+              <form method="POST" action="/admin/delete">
+                <input type="hidden" name="id" value="{{$value.ID.Hex}}">
+                <button class="button is-danger">Delete</button>
+              </form>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
 </div>
 {{end}}
 

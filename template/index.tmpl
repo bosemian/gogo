@@ -2,28 +2,36 @@
 <div>
   Index Page
   <a class="button is-link" href="/admin/login">login</a>
+  <a class="button is-link" href="/register">register</a>
   <br>
   <div class="columns is-mobile">
     <div class="column is-half is-offset-one-quarter">
       {{range .List}}
-      <div class="box">
-        <article class="media">
-          <div class="media-left">
-            <figure class="image is-64x64">
-              <img src="http://bulma.io/images/placeholders/128x128.png" alt="Image">
-            </figure>
+        <a href="/news/{{.ID.Hex}}">
+          <div class="box">
+              <article class="media">
+                <div class="media-left">
+                  <figure class="image is-64x64">
+                    {{ if .Image}}
+                    <img src="{{.Image}}">
+                    {{ else }}
+                    <img src="http://bulma.io/images/placeholders/128x128.png" alt="Image">
+                    {{end}}
+                  </figure>
+                </div>
+                <div class="media-content">
+                  <div class="content">
+                    <p>
+                      <strong>{{.Title}}</strong>
+                      <br>
+                      {{.Detail}}
+                    </p>
+                  </div>
+                </div>
+              </article>
           </div>
-          <div class="media-content">
-            <div class="content">
-              <p>
-                <strong>{{.Title}}</strong>
-                <br>
-                {{.Detail}}
-              </p>
-            </div>
-          </div>
-        </article>
-      </div>
+        </a>
+        <br>
       {{end}}
     </div>
   </div>
