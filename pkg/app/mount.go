@@ -6,6 +6,7 @@ import "github.com/bosemian/gogo/pkg/model"
 // Mount handler mux
 func Mount(mux *http.ServeMux) {
 	mux.HandleFunc("/", index) // list all news
+	mux.Handle("/-/", http.StripPrefix("/-", http.FileServer(http.Dir("static"))))
 	mux.Handle("/upload/", http.StripPrefix("/upload", http.FileServer(http.Dir("upload"))))
 	mux.Handle("/news/", http.StripPrefix("/news", http.HandlerFunc(newsView)))
 
